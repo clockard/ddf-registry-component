@@ -21,14 +21,15 @@
   
   <modelVersion>4.0.0</modelVersion>
   <artifactId>distribution</artifactId>
-  <version>2.6.0-SNAPSHOT</version>
+  <version>3.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>DDF Distribution</name>
   
   <properties>
     <commons-io.version>2.1</commons-io.version>
-    <karaf.version>2.3.3</karaf.version>
-    <pax.web.version>3.0.4</pax.web.version>
+    <karaf.version>3.0.1</karaf.version>
+    <karaf-cellar.version>3.0.0</karaf-cellar.version>
+    <sitename.default>ddf.distribution</sitename.default>
   </properties> 
   
   <modules>
@@ -36,7 +37,7 @@
     <module>webconsole-branding</module>
     <module>webconsole-branding-plugin</module>
     <module>ddf-common</module>
-    <module>kernel</module>
+    <module>ddf-kernel</module>
     <module>install-profiles</module>
     <module>ddf</module>
   </modules>

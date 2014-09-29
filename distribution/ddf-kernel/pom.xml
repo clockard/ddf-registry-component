@@ -4,7 +4,7 @@
  * Copyright (c) Codice Foundation
  *
  * This is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either
- * version 3 of the License, or any later version.
+ * version 3 of the License, or any later version. 
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details. A copy of the GNU Lesser General Public License is distributed along with this program and can be found at
@@ -13,37 +13,24 @@
  **/
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <artifactId>distribution</artifactId>
-        <groupId>ddf</groupId>
-        <version>3.0.0-SNAPSHOT</version>
-    </parent>
+  <parent>
+    <artifactId>distribution</artifactId>
+    <groupId>ddf</groupId>
+    <version>3.0.0-SNAPSHOT</version>
+  </parent>
 
-    <!--
-    Packages the DDF Standard distribution, which consists of the DDF Core distribution.
-
-    Note that this distribution has the DDF Kernel distribution as its parent, hence
-    all of the maven goals in the DDF Kernel distribution pom will execute unless they are overridden
-    in this pom.
-
-    -->
-    <artifactId>ddf</artifactId>
-    <name>DDF :: Distribution :: DDF</name>
-    <packaging>karaf-assembly</packaging>
-
-    <properties>
-        <opendj-embedded.app.version>1.2.0-SNAPSHOT</opendj-embedded.app.version>
-        <ddf.security.app.version>3.0.0-SNAPSHOT</ddf.security.app.version>
-        <ddf.platform.app.version>2.6.0-SNAPSHOT</ddf.platform.app.version>
-        <ddf.content.app.version>2.4.1-SNAPSHOT</ddf.content.app.version>
-        <ddf.catalog.app.version>2.6.0-SNAPSHOT</ddf.catalog.app.version>
-        <ddf.solr.catalog.app.version>2.4.3-SNAPSHOT</ddf.solr.catalog.app.version>
-        <ddf.searchui.app.version>2.6.0-SNAPSHOT</ddf.searchui.app.version>
-        <ddf.spatial.app.version>2.6.0-SNAPSHOT</ddf.spatial.app.version>
-        <ddf.admin.app.version>2.0.0-SNAPSHOT</ddf.admin.app.version>
-    </properties>
+  <!--
+  Packages the DDF configured Karaf.
+  
+  This is the DDF distribution with the smallest footprint and the building block for other
+  DDF distributions
+  -->
+  <artifactId>ddf-kernel</artifactId>
+  <groupId>ddf.distribution</groupId>
+  <name>DDF :: Distribution :: Kernel</name>
+  <packaging>karaf-assembly</packaging>
 
     <dependencies>
         <dependency>
@@ -77,79 +64,6 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- DDF applications to add to the distribution-->
-        <dependency>
-            <groupId>org.codice.opendj.embedded</groupId>
-            <artifactId>opendj-embedded-app</artifactId>
-            <version>${opendj-embedded.app.version}</version>
-            <classifier>features</classifier>
-            <type>xml</type>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>ddf.platform</groupId>
-            <artifactId>platform-app</artifactId>
-            <version>${ddf.platform.app.version}</version>
-            <classifier>features</classifier>
-            <type>xml</type>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>ddf.catalog</groupId>
-            <artifactId>catalog-app</artifactId>
-            <version>${ddf.catalog.app.version}</version>
-            <classifier>features</classifier>
-            <type>xml</type>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>ddf.admin</groupId>
-            <artifactId>admin-app</artifactId>
-            <version>${ddf.admin.app.version}</version>
-            <classifier>features</classifier>
-            <type>xml</type>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>ddf.catalog.solr</groupId>
-            <artifactId>catalog-solr-app</artifactId>
-            <version>${ddf.solr.catalog.app.version}</version>
-            <classifier>features</classifier>
-            <type>xml</type>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>ddf.ui.search</groupId>
-            <artifactId>search-app</artifactId>
-            <version>${ddf.searchui.app.version}</version>
-            <classifier>features</classifier>
-            <type>xml</type>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>ddf.security</groupId>
-            <artifactId>security-services-app</artifactId>
-            <version>${ddf.security.app.version}</version>
-            <classifier>features</classifier>
-            <type>xml</type>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>ddf.content</groupId>
-            <artifactId>content-app</artifactId>
-            <version>${ddf.content.app.version}</version>
-            <classifier>features</classifier>
-            <type>xml</type>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.codice.ddf.spatial</groupId>
-            <artifactId>spatial-app</artifactId>
-            <version>${ddf.spatial.app.version}</version>
-            <classifier>features</classifier>
-            <type>xml</type>
-            <scope>runtime</scope>
-        </dependency>
     </dependencies>
 
     <build>
@@ -174,11 +88,6 @@
                         <feature>spring-jms</feature>
                         <feature>spring-tx</feature>
                         <feature>webconsole</feature>
-                        <!-- DDF Apps -->
-                        <feature>kernel-webconsolebranding</feature>
-                        <feature>platform-app</feature>
-                        <feature>admin-app</feature>
-                        <feature>admin-modules-installer</feature>
                     </bootFeatures>
                     <installedFeatures>
                     </installedFeatures>

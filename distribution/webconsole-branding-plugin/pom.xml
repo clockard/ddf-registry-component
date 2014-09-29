@@ -17,7 +17,7 @@
   <parent>
     <artifactId>distribution</artifactId>
     <groupId>ddf</groupId>
-    <version>2.6.0-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
   </parent>
   
   <artifactId>webconsole-branding-plugin</artifactId>
@@ -42,7 +42,7 @@
           	<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
             <Export-Package />
             <Import-Package>
-            	org.apache.felix.webconsole,
+            	org.apache.felix.webconsole;version="[3.1,4)",
             	org.apache.commons.io,
             	org.osgi.service.blueprint
             </Import-Package>

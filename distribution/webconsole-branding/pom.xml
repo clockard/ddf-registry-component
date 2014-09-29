@@ -18,7 +18,7 @@
   <parent>
     <artifactId>distribution</artifactId>
     <groupId>ddf</groupId>
-    <version>2.6.0-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
   </parent>
   
   <artifactId>webconsole-branding</artifactId>
@@ -40,7 +40,7 @@
         <extensions>true</extensions>
         <configuration>
           <instructions>
-            <Fragment-Host>org.apache.karaf.webconsole.console;bundle-version="[2,3)"</Fragment-Host>
+            <Fragment-Host>org.apache.karaf.webconsole.console;bundle-version="[2,4)"</Fragment-Host>
             <Export-Package />
             <Import-Package />
           </instructions>
