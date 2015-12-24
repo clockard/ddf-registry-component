@@ -31,6 +31,7 @@ import javax.management.ObjectName;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.karaf.features.BundleInfo;
+import org.apache.karaf.features.Dependency;
 import org.apache.karaf.features.Feature;
 import org.codice.ddf.admin.application.plugin.ApplicationPlugin;
 import org.codice.ddf.admin.application.rest.model.FeatureDetails;
@@ -192,8 +193,8 @@ public class ApplicationServiceBean implements ApplicationServiceBeanMBean {
             profileMap.put(INSTALL_PROFILE_DESCRIPTION, profile.getDescription());
 
             List<String> includedFeatures = new ArrayList<String>();
-            for (Feature feature : profile.getDependencies()) {
-                includedFeatures.add(feature.getName());
+            for (Dependency dependency : profile.getDependencies()) {
+                includedFeatures.add(dependency.getName());
             }
             profileMap.put(INSTALL_PROFILE_DEFAULT_APPLICATIONS, includedFeatures);
 

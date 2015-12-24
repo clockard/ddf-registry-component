@@ -11,21 +11,24 @@
  *
  **/
  -->
-<features name="${project.artifactId}-${project.version}">
+<features name="${project.artifactId}-${project.version}"
+          xmlns="http://karaf.apache.org/xmlns/features/v1.3.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://karaf.apache.org/xmlns/features/v1.3.0 http://karaf.apache.org/xmlns/features/v1.3.0">
 
-    <repository>mvn:org.apache.karaf.assemblies.features/standard/${karaf.version}/xml/features</repository>
-    <repository>mvn:org.apache.karaf.assemblies.features/spring/${karaf.version}/xml/features</repository>
-    <repository>mvn:org.apache.karaf.assemblies.features/enterprise/${karaf.version}/xml/features</repository>
+    <repository>mvn:org.apache.karaf.features/standard/${karaf.version}/xml/features</repository>
+    <repository>mvn:org.apache.karaf.features/spring/${karaf.version}/xml/features</repository>
+    <repository>mvn:org.apache.karaf.features/enterprise/${karaf.version}/xml/features</repository>
 
-    <feature name="kernel-webconsole" description="DDF Kernel-customized karaf webconsole" version="${project.version}">
+    <feature name="kernel-webconsole" description="DDF Kernel-customized karaf webconsole"
+             version="${project.version}">
+        <feature>webconsole</feature>
+        <!--
         <feature>http</feature>
         <feature>aries-blueprint</feature>
         <feature>jaas</feature>
         <bundle start-level="30">
             mvn:org.apache.felix/org.apache.felix.metatype/1.0.12
-        </bundle>
-        <bundle start-level="30">
-            mvn:org.apache.karaf.webconsole/org.apache.karaf.webconsole.branding/${karaf.version}
         </bundle>
         <bundle start-level="30">
             mvn:org.apache.karaf.webconsole/org.apache.karaf.webconsole.console/${karaf.version}
@@ -54,9 +57,10 @@
                 mvn:org.apache.felix/org.apache.felix.webconsole.plugins.ds/1.0.0
             </bundle>
         </conditional>
+        -->
     </feature>
 
-    <feature name="kernel-webconsolebranding" description="" version="${project.version}" >
+    <feature name="kernel-webconsolebranding" description="" version="${project.version}">
         <bundle>mvn:commons-io/commons-io/${commons-io.version}</bundle>
         <bundle>mvn:ddf.distribution/webconsole-branding/${project.version}</bundle>
         <bundle>mvn:ddf.distribution/webconsole-branding-plugin/${project.version}</bundle>

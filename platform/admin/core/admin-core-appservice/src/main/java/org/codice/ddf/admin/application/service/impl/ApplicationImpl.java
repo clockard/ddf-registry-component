@@ -13,6 +13,7 @@
  */
 package org.codice.ddf.admin.application.service.impl;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
@@ -63,13 +64,13 @@ public class ApplicationImpl implements Application, Comparable<Application> {
     public ApplicationImpl(Repository repo) {
         location = repo.getURI();
         try {
-            features = new HashSet<Feature>(Arrays.asList(repo.getFeatures()));
+            features = new HashSet<>(Arrays.asList(repo.getFeatures()));
         } catch (Exception e) {
             logger.warn(
                     "Error occured while trying to parse information for application. Application created but may have missing information.");
-            features = new HashSet<Feature>();
+            features = new HashSet<>();
         }
-        List<Feature> autoFeatures = new ArrayList<Feature>();
+        List<Feature> autoFeatures = new ArrayList<>();
         for (Feature curFeature : features) {
             if (curFeature.getInstall().equalsIgnoreCase(Feature.DEFAULT_INSTALL_MODE)) {
                 autoFeatures.add(curFeature);
@@ -81,17 +82,21 @@ public class ApplicationImpl implements Application, Comparable<Application> {
             version = mainFeature.getVersion();
             description = mainFeature.getDescription();
         } else {
-            if (repo.getName() == null) {
-                logger.warn(
-                        "No information available inside the repository, cannot create application instance.");
-                throw new IllegalArgumentException(
-                        "No identifying information available inside the repository, cannot create application instance.");
+            try {
+                if (repo.getName() == null) {
+                    logger.warn(
+                            "No information available inside the repository, cannot create application instance.");
+                    throw new IllegalArgumentException(
+                            "No identifying information available inside the repository, cannot create application instance.");
+                }
+                logger.debug(
+                        "Could not determine main feature in {}, using defaults. Each application should have only 1 auto install feature but {} were found in this application.",
+                        repo.getName(), autoFeatures.size());
+                name = repo.getName();
+                version = "0.0.0";
+            } catch (IOException e) {
+                logger.warn("Unable to get Repository Name.", e);
             }
-            logger.debug(
-                    "Could not determine main feature in {}, using defaults. Each application should have only 1 auto install feature but {} were found in this application.",
-                    repo.getName(), autoFeatures.size());
-            name = repo.getName();
-            version = "0.0.0";
         }
 
     }

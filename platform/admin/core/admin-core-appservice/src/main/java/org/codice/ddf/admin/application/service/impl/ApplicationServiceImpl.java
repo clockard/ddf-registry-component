@@ -30,6 +30,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.karaf.bundle.core.BundleState;
 import org.apache.karaf.bundle.core.BundleStateService;
 import org.apache.karaf.features.BundleInfo;
+import org.apache.karaf.features.Dependency;
 import org.apache.karaf.features.Feature;
 import org.apache.karaf.features.FeaturesService;
 import org.apache.karaf.features.Repository;
@@ -92,23 +93,28 @@ public class ApplicationServiceImpl implements ApplicationService {
                 .getServiceReference(FeaturesService.class);
         this.featuresService = context.getService(featuresServiceRef);
         this.bundleStateServices = bundleStateServices;
-        ignoredApplicationNames = new HashSet<String>();
+        ignoredApplicationNames = new HashSet<>();
 
     }
 
     @Override
     public Set<Application> getApplications() {
         logger.trace("Getting all applications.");
-        Repository[] repos = featuresService.listRepositories();
-        logger.debug("Found {} applications from feature service.", repos.length);
+        Repository[] repos = {};
+        try {
+            repos = featuresService.listRepositories();
+            logger.debug("Found {} applications from feature service.", repos.length);
 
-        if (logger.isDebugEnabled()) {
-            for (int ii = 0; ii < repos.length; ++ii) {
-                logger.debug("Repo/App {}: {}", ii, repos[ii].getName());
+            if (logger.isDebugEnabled()) {
+                for (int ii = 0; ii < repos.length; ++ii) {
+                    logger.debug("Repo/App {}: {}", ii, repos[ii].getName());
+                }
             }
+        } catch (Exception e) {
+            logger.warn("Unable to list of Repositories.", e);
         }
 
-        Set<Application> applications = new HashSet<Application>(repos.length);
+        Set<Application> applications = new HashSet<>(repos.length);
         for (int i = 0; i < repos.length; i++) {
             Application newApp = new ApplicationImpl(repos[i]);
             try {
@@ -122,7 +128,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                         newApp.getName(), ase);
             }
         }
-        return new TreeSet<Application>(applications);
+        return new TreeSet<>(applications);
     }
 
     @Override
@@ -310,13 +316,13 @@ public class ApplicationServiceImpl implements ApplicationService {
                 }
 
                 // eliminate duplications with a set
-                Set<Feature> dependencies = new HashSet<Feature>(mainFeature.getDependencies());
+                Set<Dependency> dependencies = new HashSet<>(mainFeature.getDependencies());
                 // remove any features that are local to the application
                 dependencies.removeAll(curAppNode.getKey().getFeatures());
                 // loop through all of the features that are left to determine
                 // where they are from
                 Set<Application> depAppSet = new HashSet<Application>();
-                for (Feature curDepFeature : dependencies) {
+                for (Dependency curDepFeature : dependencies) {
                     Application dependencyApp = findFeature(
                             featuresService.getFeature(curDepFeature.getName()),
                             filteredApplications);
@@ -476,15 +482,17 @@ public class ApplicationServiceImpl implements ApplicationService {
      * @return A set of all features that are dependencies
      */
     private Set<Feature> getAllDependencyFeatures(Feature feature) throws Exception {
-        Set<Feature> tmpList = new HashSet<Feature>();
+        Set<Feature> tmpList = new HashSet<>();
         // get accurate feature reference from service - workaround for
         // KARAF-2896 'RepositoryImpl load method incorrectly populates
         // "features" list'
         Feature curFeature = featuresService.getFeature(feature.getName(), feature.getVersion());
 
         if (curFeature != null) {
-            for (Feature dependencyFeature : curFeature.getDependencies()) {
-                tmpList.addAll(getAllDependencyFeatures(dependencyFeature));
+            for (Dependency dependencyFeature : curFeature.getDependencies()) {
+                Feature feat = featuresService
+                        .getFeature(dependencyFeature.getName(), dependencyFeature.getVersion());
+                tmpList.addAll(getAllDependencyFeatures(feat));
             }
             tmpList.add(curFeature);
         } else {
@@ -817,15 +825,11 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     public List<FeatureDetails> findApplicationFeatures(String applicationName) {
-        List<FeatureDetails> features = new ArrayList<FeatureDetails>();
-        try {
-            for (Feature feature : getRepositoryFeatures(applicationName)) {
-                if (!isAppInFeatureList(feature, applicationName)) {
-                    features.add(getFeatureView(feature));
-                }
+        List<FeatureDetails> features = new ArrayList<>();
+        for (Feature feature : getRepositoryFeatures(applicationName)) {
+            if (!isAppInFeatureList(feature, applicationName)) {
+                features.add(getFeatureView(feature));
             }
-        } catch (Exception ex) {
-            logger.warn("Could not obtain Application Features.", ex);
         }
         return features;
     }
@@ -836,16 +840,16 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     private List<Feature> getRepositoryFeatures(String repositoryName) {
-        List<Feature> repoFeatures = new ArrayList<Feature>();
-        for (Repository repository : featuresService.listRepositories()) {
-            if (repository.getName().equalsIgnoreCase(repositoryName)) {
-                try {
+        List<Feature> repoFeatures = new ArrayList<>();
+        try {
+            for (Repository repository : featuresService.listRepositories()) {
+                if (repository.getName().equalsIgnoreCase(repositoryName)) {
                     repoFeatures = Arrays.asList(repository.getFeatures());
-                } catch (Exception ex) {
-                    logger.warn("Could not get Repository Features", ex);
+                    break;
                 }
-                break;
             }
+        } catch (Exception e) {
+            logger.warn("Could not get Repository Features", e);
         }
         return repoFeatures;
     }

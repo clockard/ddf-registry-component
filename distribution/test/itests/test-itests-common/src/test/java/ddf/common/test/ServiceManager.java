@@ -10,11 +10,9 @@
  * Lesser General Public License for more details. A copy of the GNU Lesser General Public License
  * is distributed along with this program and can be found at
  * <http://www.gnu.org/licenses/lgpl.html>.
- **/
+ */
 package ddf.common.test;
 
-import static org.apache.karaf.shell.osgi.BlueprintListener.BlueprintState.Created;
-import static org.apache.karaf.shell.osgi.BlueprintListener.BlueprintState.Failure;
 import static org.junit.Assert.fail;
 import static com.jayway.restassured.RestAssured.get;
 
@@ -33,8 +31,9 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.karaf.bundle.core.BundleState;
+import org.apache.karaf.bundle.state.blueprint.internal.BlueprintStateService;
 import org.apache.karaf.features.FeaturesService;
-import org.apache.karaf.shell.osgi.BlueprintListener;
 import org.codice.ddf.ui.admin.api.ConfigurationAdminExt;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -72,7 +71,7 @@ public class ServiceManager {
 
     private final AdminConfig adminConfig;
 
-    private BlueprintListener blueprintListener;
+    private BlueprintStateService blueprintListener;
 
     public ServiceManager(BundleContext bundleCtx, MetaTypeService metatype,
             AdminConfig adminConfig) {
@@ -247,7 +246,7 @@ public class ServiceManager {
     public void waitForRequiredBundles(String symbolicNamePrefix) throws InterruptedException {
         boolean ready = false;
         if (blueprintListener == null) {
-            blueprintListener = new BlueprintListener();
+            blueprintListener = new BlueprintStateService();
             bundleCtx.registerService("org.osgi.service.blueprint.container.BlueprintListener",
                     blueprintListener, null);
         }
@@ -260,11 +259,11 @@ public class ServiceManager {
             for (Bundle bundle : bundles) {
                 if (bundle.getSymbolicName().startsWith(symbolicNamePrefix)) {
                     String bundleName = bundle.getHeaders().get(Constants.BUNDLE_NAME);
-                    String blueprintState = blueprintListener.getState(bundle);
+                    BundleState blueprintState = blueprintListener.getState(bundle);
                     if (blueprintState != null) {
-                        if (Failure.toString().equals(blueprintState)) {
+                        if (BundleState.Failure.equals(blueprintState)) {
                             fail("The blueprint for " + bundleName + " failed.");
-                        } else if (!Created.toString().equals(blueprintState)) {
+                        } else if (!BundleState.Active.equals(blueprintState)) {
                             LOGGER.info("{} blueprint not ready with state {}", bundleName,
                                     blueprintState);
                             ready = false;
